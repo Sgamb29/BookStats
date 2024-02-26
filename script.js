@@ -65,6 +65,7 @@ function calculateGoal() {
     for (const inp of inputs) {
         if (!inp.value) {
             output.innerText = "Form Incomplete."
+            return
         }
 
     let pagesLeft = parseInt(totalPages.value) - parseInt(startPage.value);
@@ -83,10 +84,8 @@ function toggleElements() {
 
     for (const el of elementsToHide) {
         if (el.hidden) {
-            console.log("hidden");
             el.hidden = false;
         } else {
-            console.log("hiding");
             el.hidden = true;
         }
         
@@ -96,7 +95,6 @@ function toggleElements() {
     } else {
         endPage.labels[0].innerText = checkText;
     } 
-    console.log("ran");
 }
 
 function updateDisplay() {
