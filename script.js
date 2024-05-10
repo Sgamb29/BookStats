@@ -6,7 +6,6 @@ let statsForm = document.getElementById("bookStatsForm");
 statsForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    let startTime = document.getElementById("startTime");
     let endTime = document.getElementById("endTime");
     let startPage = document.getElementById("startPage");
     let endPage = document.getElementById("endPage");
@@ -18,7 +17,7 @@ statsForm.addEventListener("submit", (e) => {
         return;
     }
 
-    let inputs = [startTime, endTime, startPage, endPage,
+    let inputs = [endTime, startPage, endPage,
         totalPages]
 
     for (let x = 0; x < inputs.length; x++) {
@@ -28,12 +27,7 @@ statsForm.addEventListener("submit", (e) => {
         }
     }
 
-    let start = startTime.value.split(':');
-    let end = endTime.value.split(':');
-
-    let startMins = parseInt(start[0]) * 60 + parseInt(start[1]);
-    let endMins = parseInt(end[0]) * 60 + parseInt(end[1]);
-    let durationMins = endMins - startMins;
+    let durationMins = endTime.value;
     let readPages = parseInt(endPage.value) - parseInt(startPage.value);
 
     let pagesPerMin = readPages / durationMins;
@@ -77,8 +71,7 @@ function calculateGoal() {
 }
 
 function toggleElements() {
-    let elementsToHide = [startTime, startTime.labels[0],
-                            endTime, endTime.labels[0]];
+    let elementsToHide = [ endTime, endTime.labels[0]];
 
     let checkText = "End Page:";
 
