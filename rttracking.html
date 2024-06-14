@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Time Tracking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body class="container-fluid text-center col">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="index.html">Book Stats Calculator</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-link active" aria-current="page" href="rttracking.html">Real Time Tracking</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    <h1 class="text-bg-secondary my-3">Book Stats Real Time Tracking</h1>
+
+    <fieldset>
+        <div>
+          <input type="radio" id="space" name="choice" checked />
+          <label for="space">Space Bar</label>
+        </div>
+      
+        <div>
+          <input type="radio" id="tap" name="choice" />
+          <label for="tap">Tap</label>
+        </div>
+      </fieldset>
+
+    <form id="bookStatsRTForm" method="get">
+        <label for="startPage">Start Page:</label><br>
+        <input class="mb-3" type="number" id="startPage" name="startPage"><br> 
+        <label for="totalPages">Total Pages in Book:</label><br>
+        <input class="mb-3" type="number" id="totalPages" name="totalPages"><br>
+       </form>
+       <p><strong>How it Works:</strong><br> Simply press the Start button, keep your computer or smartphone awake with the webpage open, <em>(It may be helpful to change your device settings to not fall asleep)</em> <em>also the webpage must be the current focus,</em> and for every page turn press the spacebar on your keyboard or tap anywhere on the webpage.</p>
+
+        <button type="button" class="btn btn-secondary btn-lg" onclick="startTracking()">Start</button>
+
+        <br>
+        <br>
+        <br>
+        <p class="lead" id="output"></p>
+
+       <script src="rtscript.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
