@@ -58,8 +58,8 @@ function startTracking() {
 
 function calculateStats() {
     elapsedSeconds = Date.now() / 1000 - startSeconds;
-    currentPage += 1;
-    pagesLeft -= 1;
+    currentPage += pagesPerTick;
+    pagesLeft -= pagesPerTick;
     let timeLeft = elapsedSeconds * pagesLeft / 60;
     let hoursLeft = parseInt(timeLeft / 60);
     let minutesLeft = timeLeft - hoursLeft * 60;
