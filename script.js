@@ -139,6 +139,9 @@ function getCookie(name) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    if (getCookie("saveData") === "") {
+        return;
+    }
     const saveData = JSON.parse(getCookie("saveData"));
 
 
