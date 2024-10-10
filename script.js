@@ -12,6 +12,8 @@ statsForm.addEventListener("submit", (e) => {
     let totalPages = document.getElementById("totalPages");
     let output = document.getElementById("output");
 
+    const bookTitle = document.getElementById("bookTitle");
+
     if (goalCheckbox.checked) {
         calculateGoal();
         return;
@@ -37,12 +39,27 @@ statsForm.addEventListener("submit", (e) => {
     let hoursToFinish = parseInt(timeToFinish / 60);
     let minutesToFinish = timeToFinish - (hoursToFinish * 60);
 
+    minutesToFinish = Math.round(minutesToFinish);
+
     output.innerText = `You read ${readPages} pages in ${durationMins} mins\nYour speed is ${pagesPerMin.toFixed(2)} pages per minute.\n
                         Time left to finish the book at this speed is: ${hoursToFinish} hours and ${minutesToFinish} minutes`;
 
+    if (bookTitle.value !== "") {
+        const saveData = {
+            "bookTitle": bookTitle.value.replaceAll(";", encodeSemi),
+            "totalPages": totalPages.value,
+            "currentPage": endPage.value,
+            "timeLeft": `${hoursToFinish}:${minutesToFinish}`,
+            "pagesPerMin": pagesPerMin.toFixed(2),
+        }
+        document.cookie = "saveData=; expires=Thu, 01 Jan 1970 00:00:00 GMT;"
+        setCookie("saveData", JSON.stringify(saveData), 10000);
+        console.log(saveData);
+    }
     
 })
 
+const encodeSemi = "semicolonencoder1";
 
 let speedCheckbox = document.getElementById("speed");
 let goalCheckbox = document.getElementById("goal");
@@ -102,3 +119,42 @@ function updateDisplay() {
         }
     }
 }
+
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days*24*60*60*1000));
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value};${expires};path=/`;
+}
+
+
+function getCookie(name) {
+    try {
+        const value = document.cookie.split(`${name}=`)[1].split(";")[0];
+        return value;
+        } catch {
+            return "";
+        }
+        
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const saveData = JSON.parse(getCookie("saveData"));
+
+
+    const startPage = document.getElementById("startPage");
+    const totalPages = document.getElementById("totalPages");
+    const bookTitle = document.getElementById("bookTitle");
+
+    bookTitle.value = saveData["bookTitle"].replaceAll(encodeSemi, ";");
+    startPage.value = saveData["currentPage"];
+    totalPages.value = saveData["totalPages"];
+
+    const hours = saveData["timeLeft"].split(":")[0];
+    const mins = saveData["timeLeft"].split(":")[1];
+    const pagesPerMin = saveData["pagesPerMin"];
+    document.getElementById("output").innerText = `Previous calculation: You're last speed was ${pagesPerMin} pages per minute, with ${hours} hours and ${mins} minutes left to finish ${bookTitle.value}`;
+
+
+
+});
