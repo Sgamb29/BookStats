@@ -196,6 +196,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
     });
+    
+    if (currentActivtatedSlot === null) {
+        currentActivtatedSlot = saveSlot1;
+        setCurrent(saveSlot1, "")
+    }
 
 
 
