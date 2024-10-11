@@ -1,16 +1,19 @@
 
 
+// Elements Variables
+const statsForm = document.getElementById("bookStatsForm");
 
-let statsForm = document.getElementById("bookStatsForm");
 
+
+// Calculating the reading speed
 statsForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    let endTime = document.getElementById("endTime");
-    let startPage = document.getElementById("startPage");
-    let endPage = document.getElementById("endPage");
-    let totalPages = document.getElementById("totalPages");
-    let output = document.getElementById("output");
+    const endTime = document.getElementById("endTime");
+    const startPage = document.getElementById("startPage");
+    const endPage = document.getElementById("endPage");
+    const totalPages = document.getElementById("totalPages");
+    const output = document.getElementById("output");
 
     const bookTitle = document.getElementById("bookTitle");
 
@@ -52,9 +55,10 @@ statsForm.addEventListener("submit", (e) => {
             "timeLeft": `${hoursToFinish}:${minutesToFinish}`,
             "pagesPerMin": pagesPerMin.toFixed(2),
         }
-        document.cookie = "saveData=; expires=Thu, 01 Jan 1970 00:00:00 GMT;"
-        setCookie("saveData", JSON.stringify(saveData), 10000);
-        console.log(saveData);
+        
+        currentActivtatedSlot.data = saveData;
+        currentActivtatedSlot.saveInSlot();
+        currentButtonEl.innerText = currentActivtatedSlot.data["bookTitle"];
     }
     
 })
@@ -138,26 +142,147 @@ function getCookie(name) {
         
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    if (getCookie("saveData") === "") {
-        return;
+
+// Initalizing save slots
+class SaveSlot {
+    constructor(cookieName, id) {
+        this.cookieName = cookieName;
+        this.id = id;
     }
-    const saveData = JSON.parse(getCookie("saveData"));
+
+    data = {
+        "bookTitle": "-- --",
+        "totalPages": "",
+        "currentPage": "",
+        "timeLeft": "",
+        "pagesPerMin": "",
+    };
+
+    saveInSlot() {
+        
+        document.cookie = `${this.cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT;`
+        setCookie(this.cookieName, JSON.stringify(this.data), 10000);
+    }
 
 
-    const startPage = document.getElementById("startPage");
-    const totalPages = document.getElementById("totalPages");
-    const bookTitle = document.getElementById("bookTitle");
+}
+const saveSlot1 = new SaveSlot("saveData", "1");
+const saveSlot2 = new SaveSlot("saveData2", "2");
+const saveSlot3 = new SaveSlot("saveData3", "3");
 
-    bookTitle.value = saveData["bookTitle"].replaceAll(encodeSemi, ";");
-    startPage.value = saveData["currentPage"];
-    totalPages.value = saveData["totalPages"];
+const saveSlotClasses = [saveSlot1, saveSlot2, saveSlot3];
 
-    const hours = saveData["timeLeft"].split(":")[0];
-    const mins = saveData["timeLeft"].split(":")[1];
-    const pagesPerMin = saveData["pagesPerMin"];
-    document.getElementById("output").innerText = `Previous calculation: You're last speed was ${pagesPerMin} pages per minute, with ${hours} hours and ${mins} minutes left to finish ${bookTitle.value}`;
+let currentActivtatedSlot = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const currentId = getCookie("currentSelected");
+
+    saveSlotClasses.forEach((c) => {
+        if (getCookie(c.cookieName) === "") {
+            return;
+        }
+        const saveData = JSON.parse(getCookie(c.cookieName));
+
+        c.data = saveData;
+
+
+        if (c.id === currentId) {
+            currentActivtatedSlot = c;
+            setCurrent(c, "");
+        } else if (currentId === "" & c.id === "1") {
+            currentActivtatedSlot = c;
+            setCurrent(c, "");
+        }
+        
+    });
+
+
 
 
 
 });
+
+// For the saveslot buttons
+const saveSlotEls = [];
+
+let saveSlotsGenerated = false;
+
+function showHideSlots() {
+    saveSlotEls.forEach((el) => {
+        el.hidden = !el.hidden;
+
+    });
+}
+
+function showSaveSlots() {
+    const container = document.getElementById("saveSlotsContainer");
+
+    
+    if (saveSlotsGenerated) {
+        showHideSlots();
+        return;
+    }
+
+    // Adding Elements
+    saveSlotClasses.forEach((c) => {
+        const newEl = document.createElement("button");
+        newEl.className = "btn btn-secondary mb-3";
+        if (c.id === getCookie("currentSelected")) {
+            newEl.className = "btn btn-primary mb-3"
+            currentButtonEl = newEl;
+        }
+
+        newEl.innerText = c.data["bookTitle"];
+
+        newEl.addEventListener("click", () => {
+            setCurrent(c, newEl);
+        });
+        saveSlotEls.push(newEl);
+        container.appendChild(newEl);
+    });
+
+    saveSlotsGenerated = true;
+    
+}
+
+currentButtonEl = null;
+// Changing Current Data and Updating UI
+function setCurrent(c, elToUpdate) {
+
+    setCookie("currentSelected", c.id, 10000);
+    currentActivtatedSlot = c;
+    currentButtonEl = elToUpdate;
+    // Changing Button Color
+    saveSlotEls.forEach((el) => {
+        if (el === elToUpdate) {
+            el.className = "btn btn-primary mb-3"
+        } else {
+            el.className = "btn btn-secondary mb-3"
+        }
+    });
+
+    
+    // Updating UI
+    const startPage = document.getElementById("startPage");
+    const totalPages = document.getElementById("totalPages");
+    const bookTitle = document.getElementById("bookTitle");
+
+   
+    bookTitle.value = c.data["bookTitle"].replaceAll(encodeSemi, ";");
+    startPage.value = c.data["currentPage"];
+    totalPages.value = c.data["totalPages"];
+
+    document.getElementById("endTime").value = "";
+    document.getElementById("endPage").value = "";
+
+    if (c.data["timeLeft"] === "") {
+        return;
+    }
+    const hours = c.data["timeLeft"].split(":")[0];
+    const mins = c.data["timeLeft"].split(":")[1];
+    const pagesPerMin = c.data["pagesPerMin"];
+    document.getElementById("output").innerText = `Previous calculation: You're last speed was ${pagesPerMin} pages per minute, with ${hours} hours and ${mins} minutes left to finish ${bookTitle.value}`;
+
+}
+
