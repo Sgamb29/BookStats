@@ -246,7 +246,7 @@ function showSaveSlots() {
     
 }
 
-currentButtonEl = null;
+let currentButtonEl = null;
 // Changing Current Data and Updating UI
 function setCurrent(c, elToUpdate) {
 
